@@ -25,6 +25,8 @@ function onPromiseFormBtnSubmit(event) {
     return;
   }
   removeAllRedOutlines();
+  clearLocalStorage();
+  clearInputFields();
   //set notify messages` timeout so they don`t hide while all Promises are resolved/rejected
   //timeout can`t be less than 5 seconds
   let timeout = promiseSetup.amount * promiseSetup.step + promiseSetup.delay;
@@ -52,6 +54,14 @@ function writeToLocalStorage(obj) {
   } catch (error) {
     console.error(error);
   }
+}
+
+function clearLocalStorage() {
+  localStorage.removeItem('promiseSetup');
+}
+
+function clearInputFields() {
+  promiseForm.reset();
 }
 
 //reads data from localStorage and updates promiseSetup obj
