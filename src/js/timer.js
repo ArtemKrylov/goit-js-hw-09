@@ -69,16 +69,17 @@ export default class Timer {
 
   #onStartBtnElClick() {
     //if the timer is on - then the button is the stop button - it stops the timer and transforms to the start button
-    if (this.#timerIntervalId) {
-      clearInterval(this.#timerIntervalId);
-      this.#changeBtnText(this.#startBtnEl, 'Start');
-      this.#timerIntervalId = null;
-      return;
-    }
+    // if (this.#timerIntervalId) {
+    //   clearInterval(this.#timerIntervalId);
+    //   this.#changeBtnText(this.#startBtnEl, 'Start');
+    //   this.#timerIntervalId = null;
+    //   return;
+    // }
     this.#getSelectedDateFromStorage();
     if (!this.#checkDate()) return;
     this.#timerIntervalId = setInterval(this.#countTimer.bind(this), 1000);
-    this.#changeBtnText(this.#startBtnEl, 'Stop');
+    this.inactivateBtn();
+    // this.#changeBtnText(this.#startBtnEl, 'Stop');
   }
 
   #checkDate() {
