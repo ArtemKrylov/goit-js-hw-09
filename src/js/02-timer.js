@@ -102,7 +102,7 @@ function countTimer() {
 
 function showTimeHasCome() {
   showValuesInColor('red');
-  Notify.warning('Time has come!');
+  Notify.failure('Time has come!');
   alarmSound.play();
   const alarmIntervalId = setInterval(() => {
     console.log('sound');
