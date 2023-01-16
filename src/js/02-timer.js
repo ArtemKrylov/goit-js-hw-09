@@ -1,6 +1,7 @@
 //datetime picker
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+
 //for custom non-blocking alerts/notifications
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
@@ -16,6 +17,13 @@ const timerDataElements = {
 let selectedDate = null;
 let timerIntervalId = null;
 
+const defaultColor = timerDataElements.daysEl.style.color;
+
+//timer alorm sound
+const audioUrl = new URL('../audio/alarm-sound.mp3', import.meta.url);
+const alarmSound = new Audio(audioUrl);
+
+//flatpickr options object
 const options = {
   enableTime: true,
   time_24hr: true,
@@ -39,16 +47,9 @@ function activateBtn() {
 
 //callback function for flatpickr settings object - defines behaviour when date selection window is closed
 function onClose(selectedDates) {
-  // const startBtn = document.querySelector('[data-start]');
-  // const dateNow = new Date();
-  // const dateToCheck = new Date(selectedDates[0]);
-  // if (dateToCheck - dateNow <= 0) {
-  //   Notify.failure('Please choose a date in the future!');
-  //   startBtn.disabled = true;
-  //   return false;
-  // }
   stopInterval();
   clearValues();
+  showValuesInColor(defaultColor);
 
   if (!checkDate(selectedDates[0])) {
     Notify.failure('Please choose a date in the future!');
@@ -88,7 +89,26 @@ function checkDate(selectedDate) {
 //callback for timer setInterval
 function countTimer() {
   const timeDifference = convertMs(selectedDate - new Date());
+  console.log(timeDifference);
+  if (timeDifference.seconds === 0) {
+    if (Object.values(timeDifference).join('') === '0000') {
+      console.log('time has come');
+      showTimeHasCome();
+      stopInterval();
+    }
+  }
   showValues(timeDifference);
+}
+
+function showTimeHasCome() {
+  showValuesInColor('red');
+  Notify.warning('Time has come!');
+  alarmSound.play();
+  const alarmIntervalId = setInterval(() => {
+    console.log('sound');
+    alarmSound.play();
+  }, 2000);
+  setTimeout(() => clearInterval(alarmIntervalId), 10000);
 }
 
 //to change textContent of days/minutes/seconds timer elements
@@ -98,6 +118,17 @@ function showValues(timeDifference) {
   timerDataElements.hoursEl.textContent = addLeadingZero(String(hours));
   timerDataElements.minutesEl.textContent = addLeadingZero(String(minutes));
   timerDataElements.secondsEl.textContent = addLeadingZero(String(seconds));
+}
+
+//change element`s text color
+function changeTextColor(el, color) {
+  el.style.color = color;
+}
+
+function showValuesInColor(color) {
+  Object.values(timerDataElements).forEach(element => {
+    changeTextColor(element, color);
+  });
 }
 
 function clearValues() {
